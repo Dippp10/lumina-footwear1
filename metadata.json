@@ -1,0 +1,7 @@
+{
+  "name": "LUMINA Footwear",
+  "description": "A high-end, modern shoe brand website featuring an AI-powered Style Concierge to help you find the perfect pair for any occasion.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
