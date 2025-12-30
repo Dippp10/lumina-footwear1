@@ -60,20 +60,20 @@ const GithubSync: React.FC<GithubSyncProps> = ({ isOpen, onClose, projectFiles }
                   </svg>
                 </div>
                 <h3 className="text-xl font-bold mb-1">Code Synced Successfully</h3>
-                <p className="text-stone-500 text-sm">Now, let's make your brand live for free.</p>
+                <p className="text-stone-500 text-sm">Your files are now on GitHub. Final steps:</p>
               </div>
 
               <div className="bg-stone-50 rounded-xl p-5 mb-8 border border-stone-100">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-stone-900 mb-4 flex items-center">
-                  <span className="w-5 h-5 bg-stone-900 text-white rounded-full flex items-center justify-center text-[10px] mr-2 italic">i</span>
-                  Free Deployment Steps:
+                  <span className="w-5 h-5 bg-stone-900 text-white rounded-full flex items-center justify-center text-[10px] mr-2 italic font-serif">!</span>
+                  Final Setup (Must Do):
                 </h4>
                 <ol className="text-xs text-stone-600 space-y-3 list-decimal ml-4 pr-2">
-                  <li>Open your repo (button below).</li>
-                  <li>Go to <strong>Settings</strong> tab, then <strong>Pages</strong> in the sidebar.</li>
-                  <li>Under <b>"Build and deployment"</b>, look for <b>"Branch"</b>.</li>
-                  <li>Select <strong>main</strong> and click <strong>Save</strong>.</li>
-                  <li><span className="text-stone-400 italic font-normal">Note: Ignore the "Custom Domain" section, it is optional.</span></li>
+                  <li>Click <b>Deploy on GitHub</b> below.</li>
+                  <li>In GitHub, go to <strong>Settings</strong> &gt; <strong>Pages</strong>.</li>
+                  <li>Select <strong>main</strong> branch and click <strong>Save</strong>.</li>
+                  <li><b>IMPORTANT:</b> Click the <strong>Actions</strong> tab at the top. Wait for the task to finish (turn green).</li>
+                  <li>Your site will be live! <span className="text-stone-400 italic font-normal">(Refresh the Pages tab to see the link)</span></li>
                 </ol>
               </div>
 
@@ -82,7 +82,7 @@ const GithubSync: React.FC<GithubSyncProps> = ({ isOpen, onClose, projectFiles }
                   onClick={onClose}
                   className="px-6 py-3 border border-stone-200 rounded-xl font-medium text-sm hover:bg-stone-50 transition-colors"
                 >
-                  Later
+                  Close
                 </button>
                 <a 
                   href={repoUrl} 
