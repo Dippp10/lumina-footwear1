@@ -8,11 +8,13 @@ import Cart from './components/Cart';
 import GithubSync from './components/GithubSync';
 import { SHOE_CATALOG } from './constants';
 import { Shoe, CartItem } from './types';
+import { GithubFile } from './services/githubService';
 
 const App: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSyncOpen, setIsSyncOpen] = useState(false);
+  const [syncedFiles, setSyncedFiles] = useState<GithubFile[]>([]);
 
   const handleAddToCart = (shoe: Shoe) => {
     setCartItems(prev => {
@@ -39,21 +41,57 @@ const App: React.FC = () => {
     }));
   };
 
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const openSyncModal = async () => {
+    // List of all project files to gather and upload
+    const filesToSync = [
+      'index.html',
+      'index.tsx',
+      'App.tsx',
+      'types.ts',
+      'constants.tsx',
+      'metadata.json',
+      'services/geminiService.ts',
+      'services/githubService.ts',
+      'components/Navbar.tsx',
+      'components/Hero.tsx',
+      'components/ProductGrid.tsx',
+      'components/StyleAssistant.tsx',
+      'components/Cart.tsx',
+      'components/GithubSync.tsx',
+    ];
 
-  // Prepare file snapshot for GitHub Sync
-  const projectFiles = [
-    { path: 'index.html', content: document.documentElement.outerHTML },
-    { path: 'metadata.json', content: JSON.stringify({ name: "LUMINA Footwear", description: "AI-powered shoe brand", requestFramePermissions: ["camera"] }, null, 2) },
-    // In a real environment, we'd fetch these from the source. 
-    // Here we provide paths as placeholders for the sync tool.
-  ];
+    try {
+      // Dynamically fetch the source code of all files to prepare for sync
+      const gatheredFiles = await Promise.all(filesToSync.map(async path => {
+        try {
+          const response = await fetch(`./${path}`);
+          if (!response.ok) throw new Error(`Failed to load ${path}`);
+          const content = await response.text();
+          return { path, content };
+        } catch (e) {
+          console.warn(`Could not fetch ${path}, skipping.`);
+          return null;
+        }
+      }));
+
+      const validFiles = gatheredFiles.filter((f): f is GithubFile => f !== null);
+      setSyncedFiles(validFiles);
+      setIsSyncOpen(true);
+    } catch (err) {
+      console.error("Error gathering files for sync:", err);
+      // Fallback: at least sync the current HTML if fetch fails
+      setSyncedFiles([{ path: 'index.html', content: document.documentElement.outerHTML }]);
+      setIsSyncOpen(true);
+    }
+  };
+
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen">
       <Navbar 
         onCartClick={() => setIsCartOpen(true)} 
-        onSyncClick={() => setIsSyncOpen(true)}
+        onSyncClick={openSyncModal}
         cartCount={cartCount} 
       />
       
@@ -140,11 +178,13 @@ const App: React.FC = () => {
         onUpdateQuantity={handleUpdateQuantity}
       />
 
-      <GithubSync 
-        isOpen={isSyncOpen}
-        onClose={() => setIsSyncOpen(false)}
-        projectFiles={projectFiles}
-      />
+      {isSyncOpen && (
+        <GithubSync 
+          isOpen={isSyncOpen}
+          onClose={() => setIsSyncOpen(false)}
+          projectFiles={syncedFiles}
+        />
+      )}
     </div>
   );
 };
